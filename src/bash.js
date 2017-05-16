@@ -1,6 +1,7 @@
 import * as Util from './util';
 import { Errors } from './const';
 import * as BaseCommands from './commands';
+import * as UpdatedCommands from './updatedCommands';
 import * as BashParser from './parser';
 
 export default class Bash {
@@ -120,6 +121,10 @@ export default class Bash {
 
     hasNextCommand() {
         return this.prevCommandsIndex !== this.prevCommands.length - 1;
+    }
+
+    updateCommandsBatch(extensions = {}, commands) {
+        this.commands = Object.assign(extensions, commands);
     }
 
 }

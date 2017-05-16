@@ -1,47 +1,19 @@
 import * as Util from './util';
 import { Errors } from './const';
 
-const helpCommands = ['clear', 'ls', 'cat', 'mkdir', 'cd', 'pwd', 'echo', 'printenv', 'whoami', 'rm', 'help', 'run'].sort();
+const helpCommands = ['clear', 'ls', 'cat', 'mkdir', 'cd', 'pwd', 'echo', 'printenv', 'whoami', 'rm'].sort();
 
 export const help = {
     exec: (state) => {
         return Object.assign({}, state, {
             history: state.history.concat(
+                { value: 'this is the updated stuff'},
                 { value: 'These shell commands are defined internally.  Type \'help\' to see this list.' },
                 ...helpCommands.map(value => ({ value }))
             )
         });
     }
 };
-
-export const run = {
-  exec: (state, { args }) => {
-      const value = state.settings.user.username;
-      console.log(args, !args);
-      if (Object.keys(args).length <= 0) {
-        return Object.assign({}, state, {
-            history: state.history.concat(
-              { value: 'Run which of the following scripts:' },
-              { value: '...' },
-              { value: 'game' },
-              { value: '...' }
-            ),
-        });
-      }
-
-      if (args[0] === 'game') {
-        return Object.assign({}, state, {
-            history: state.history.concat(
-              { value: 'Loading game...' },
-            ),
-        });
-      }
-      
-      return Object.assign({}, state, {
-          history: state.history.concat({ value }),
-      });
-  },
-}
 
 export const clear = {
     exec: (state) => {

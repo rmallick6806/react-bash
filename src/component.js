@@ -13,9 +13,9 @@ const noop = () => {};
 
 export default class Terminal extends Component {
 
-    constructor({ history, structure, extensions, prefix }) {
+    constructor({ history, structure, extensions, prefix, bash }) {
         super();
-        this.Bash = new Bash(extensions);
+        this.Bash = bash || new Bash(extensions);
         this.ctrlPressed = false;
         this.state = {
             settings: { user: { username: prefix.split('@')[1] } },
@@ -192,7 +192,7 @@ Terminal.defaultProps = {
     onClose: noop,
     onExpand: noop,
     onMinimize: noop,
-    prefix: 'hacker@default',
+    prefix: 'user2404712@home',
     structure: {},
     styles: {},
     theme: Terminal.Themes.LIGHT,
