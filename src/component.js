@@ -153,6 +153,7 @@ export default class Terminal extends Component {
                 </div>
                 <div style={style.body} onClick={() => this.refs.input.focus()}>
                     {history.map(this.renderHistoryItem(style))}
+                    {this.props.children}
                     <form onSubmit={evt => this.handleSubmit(evt)} style={style.form}>
                         <span style={style.prefix}>{`${prefix} ~${cwd} $`}</span>
                         <input
