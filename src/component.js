@@ -56,7 +56,9 @@ export default class Terminal extends Component {
      * Keep input in view on change
      */
     componentDidUpdate() {
+      if (!this.props.inputDisabled) {
         this.refs.input.scrollIntoView();
+      } 
     }
 
     /*
@@ -131,6 +133,22 @@ export default class Terminal extends Component {
         this.refs.input.value = '';
     }
 
+    getInput(theme, styles, cwd, prefix) {
+      const style = Object.assign({}, Styles[theme] || Styles.light, styles);
+      return (
+        <form onSubmit={evt => this.handleSubmit(evt)} style={style.form}>
+            <span style={style.prefix}>{`${prefix} ~${cwd} $`}</span>
+            <input
+              autoComplete="off"
+              onKeyDown={this.handleKeyDown}
+              onKeyUp={this.handleKeyUp}
+              ref="input"
+              style={style.input}
+            />
+        </form>
+      );
+    };
+
     renderHistoryItem(style) {
         return (item, key) => {
             const prefix = item.hasOwnProperty('cwd') ? (
@@ -141,7 +159,7 @@ export default class Terminal extends Component {
     }
 
     render() {
-        const { onClose, onExpand, onMinimize, prefix, styles, theme } = this.props;
+        const { onClose, onExpand, onMinimize, prefix, styles, theme, children, inputDisabled } = this.props;
         const { history, cwd } = this.state;
         const style = Object.assign({}, Styles[theme] || Styles.light, styles);
         return (
@@ -153,17 +171,8 @@ export default class Terminal extends Component {
                 </div>
                 <div style={style.body} onClick={() => this.refs.input.focus()}>
                     {history.map(this.renderHistoryItem(style))}
-                    {this.props.children}
-                    <form onSubmit={evt => this.handleSubmit(evt)} style={style.form}>
-                        <span style={style.prefix}>{`${prefix} ~${cwd} $`}</span>
-                        <input
-                          autoComplete="off"
-                          onKeyDown={this.handleKeyDown}
-                          onKeyUp={this.handleKeyUp}
-                          ref="input"
-                          style={style.input}
-                        />
-                    </form>
+                    {children}
+                    {(inputDisabled) ? null : this.getInput(theme, styles, cwd, prefix)}
                 </div>
             </div>
         );

@@ -7,7 +7,7 @@ BaseStyles.ReactBash = {
     fontFamily: '\'Inconsolata\', monospace',
     fontSize: '13px',
     fontWeight: '400',
-    height: '100%',
+    height: '600px',
     overflow: 'hidden',
     textAlign: 'left',
 };

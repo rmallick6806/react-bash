@@ -15,9 +15,9 @@ export const help = {
 };
 
 export const run = {
-  exec: (state, { args }) => {
+  exec: (state, { args }, parentCommands) => {
       const value = state.settings.user.username;
-      console.log(args, !args);
+
       if (Object.keys(args).length <= 0) {
         return Object.assign({}, state, {
             history: state.history.concat(
@@ -30,13 +30,14 @@ export const run = {
       }
 
       if (args[0] === 'game') {
+        parentCommands.runSnakePit();
         return Object.assign({}, state, {
             history: state.history.concat(
-              { value: 'Loading game...' },
-            ),
+              { value: 'Loading game...' }
+            )
         });
       }
-      
+
       return Object.assign({}, state, {
           history: state.history.concat({ value }),
       });

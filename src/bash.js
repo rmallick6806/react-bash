@@ -6,8 +6,9 @@ import * as BashParser from './parser';
 
 export default class Bash {
 
-    constructor(extensions = {}) {
+    constructor(extensions = {}, parentCommands) {
         this.commands = Object.assign(extensions, BaseCommands);
+        this.parentCommands = parentCommands;
         this.prevCommands = [];
         this.prevCommandsIndex = 0;
     }
@@ -58,7 +59,7 @@ export default class Bash {
             if (command.name === '') {
                 return newState;
             } else if (this.commands[command.name]) {
-                const nextState = this.commands[command.name].exec(newState, command);
+                const nextState = this.commands[command.name].exec(newState, command, this.parentCommands);
                 errorOccurred = errorOccurred || (nextState && nextState.error);
                 return nextState;
             } else {
