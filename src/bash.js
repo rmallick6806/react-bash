@@ -32,7 +32,6 @@ export default class Bash {
                 value: input,
             }),
         });
-
         const commandList = BashParser.parse(input);
         return this.runCommands(commandList, newState);
     }

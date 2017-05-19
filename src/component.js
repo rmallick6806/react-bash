@@ -17,32 +17,20 @@ export default class Terminal extends Component {
         super();
         this.Bash = bash || new Bash(extensions);
         this.ctrlPressed = false;
-        this.state = {
-            settings: { user: { username: prefix.split('@')[1] } },
-            history: history.slice(),
-            structure: Object.assign({}, structure),
-            cwd: '',
-        };
+        // this.state = {
+        //     settings: { user: { username: prefix.split('@')[1] } },
+        //     history: history.slice(),
+        //     structure: Object.assign({}, structure),
+        //     cwd: '',
+        // };
+
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleKeyUp = this.handleKeyUp.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
         this.refs.input.focus();
-    }
-
-    componentWillReceiveProps({ extensions, structure, history }) {
-        const updatedState = {};
-        if (structure) {
-            updatedState.structure = Object.assign({}, structure);
-        }
-        if (history) {
-            updatedState.history = history.slice();
-        }
-        if (extensions) {
-            this.Bash.commands = Object.assign({}, extensions, BaseCommands);
-        }
-        this.setState(updatedState);
     }
 
     /*
@@ -58,7 +46,7 @@ export default class Terminal extends Component {
     componentDidUpdate() {
       if (!this.props.inputDisabled) {
         this.refs.input.scrollIntoView();
-      } 
+      }
     }
 
     /*
@@ -67,7 +55,7 @@ export default class Terminal extends Component {
      */
     attemptAutocomplete() {
         const input = this.refs.input.value;
-        const suggestion = this.Bash.autocomplete(input, this.state);
+        const suggestion = this.Bash.autocomplete(input, this.props.terminal);
         if (suggestion) {
             this.refs.input.value = suggestion;
         }
@@ -128,8 +116,8 @@ export default class Terminal extends Component {
 
         // Execute command
         const input = evt.target[0].value;
-        const newState = this.Bash.execute(input, this.state);
-        this.setState(newState);
+        const newState = this.Bash.execute(input, this.props.terminal);
+        this.props.onUpdateState(newState);
         this.refs.input.value = '';
     }
 
@@ -143,8 +131,7 @@ export default class Terminal extends Component {
               onKeyDown={this.handleKeyDown}
               onKeyUp={this.handleKeyUp}
               ref="input"
-              style={style.input}
-            />
+              style={style.input} />
         </form>
       );
     };
@@ -159,8 +146,7 @@ export default class Terminal extends Component {
     }
 
     render() {
-        const { onClose, onExpand, onMinimize, prefix, styles, theme, children, inputDisabled } = this.props;
-        const { history, cwd } = this.state;
+        const { onClose, onExpand, onMinimize, prefix, styles, theme, children, inputDisabled, terminal: { history, cwd } } = this.props;
         const style = Object.assign({}, Styles[theme] || Styles.light, styles);
         return (
             <div className="ReactBash" style={style.ReactBash}>
@@ -184,26 +170,16 @@ Terminal.Themes = {
     DARK: 'dark',
 };
 
-Terminal.propTypes = {
-    extensions: PropTypes.object,
-    history: PropTypes.array,
-    onClose: PropTypes.func,
-    onExpand: PropTypes.func,
-    onMinimize: PropTypes.func,
-    prefix: PropTypes.string,
-    structure: PropTypes.object,
-    styles: PropTypes.object,
-    theme: PropTypes.string,
-};
-
 Terminal.defaultProps = {
-    extensions: {},
-    history: [],
     onClose: noop,
     onExpand: noop,
     onMinimize: noop,
     prefix: 'user2404712@home',
-    structure: {},
     styles: {},
+    terminal: {
+      structure: {},
+      extensions: {},
+      history: [],
+    },
     theme: Terminal.Themes.LIGHT,
 };

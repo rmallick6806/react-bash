@@ -31,11 +31,7 @@ export const run = {
 
       if (args[0] === 'game') {
         parentCommands.runSnakePit();
-        return Object.assign({}, state, {
-            history: state.history.concat(
-              { value: 'Loading game...' }
-            )
-        });
+        return state;
       }
 
       return Object.assign({}, state, {
@@ -104,17 +100,23 @@ export const cat = {
 export const mkdir = {
     exec: (state, { args }) => {
         const path = args[0];
-        const relativePath = path.split('/');
-        const newDirectory = relativePath.pop();
-        const fullPath = Util.extractPath(relativePath.join('/'), state.cwd);
-        const deepCopy = JSON.parse(JSON.stringify(state.structure));
-        const { dir } = Util.getDirectoryByPath(deepCopy, fullPath);
+        if (path) {
+            const relativePath = path.split('/');
+            const newDirectory = relativePath.pop();
+            const fullPath = Util.extractPath(relativePath.join('/'), state.cwd);
+            const deepCopy = JSON.parse(JSON.stringify(state.structure));
+            const { dir } = Util.getDirectoryByPath(deepCopy, fullPath);
 
-        if (dir[newDirectory]) {
-            return Util.appendError(state, Errors.FILE_EXISTS, path);
+            if (dir[newDirectory]) {
+                return Util.appendError(state, Errors.FILE_EXISTS, path);
+            } else {
+                dir[newDirectory] = {};
+                return Object.assign({}, state, { structure: deepCopy });
+            }
         } else {
-            dir[newDirectory] = {};
-            return Object.assign({}, state, { structure: deepCopy });
+            return Object.assign({}, state, {
+                history: state.history.concat({ value: 'usage: mkdir [directory name]'}),
+            });
         }
     },
 };
