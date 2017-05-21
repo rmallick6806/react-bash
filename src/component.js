@@ -141,7 +141,8 @@ export default class Terminal extends Component {
             const prefix = item.hasOwnProperty('cwd') ? (
                 <span style={style.prefix}>{`${this.props.prefix} ~${item.cwd} $`}</span>
             ) : undefined;
-            return <div data-test-id={`history-${key}`} key={key} >{prefix}{item.value}</div>;
+            let type = item.type || 'text';
+            return <div data-test-id={`history-${key}`} key={key} className={`${type}-type`}>{prefix}{item.value}</div>;
         };
     }
 
@@ -155,7 +156,7 @@ export default class Terminal extends Component {
                     <span style={style.yellowCircle} onClick={onMinimize}></span>
                     <span style={style.greenCircle} onClick={onExpand}></span>
                 </div>
-                <div style={style.body} onClick={() => this.refs.input.focus()}>
+                <div style={style.body} onClick={() => this.refs.input && this.refs.input.focus()}>
                     {history.map(this.renderHistoryItem(style))}
                     {children}
                     {(inputDisabled) ? null : this.getInput(theme, styles, cwd, prefix)}
