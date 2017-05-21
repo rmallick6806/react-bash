@@ -1,7 +1,7 @@
 import * as Util from './util';
 import { Errors } from './const';
 
-const helpCommands = ['clear', 'ls', 'cat', 'mkdir', 'cd', 'pwd', 'echo', 'printenv', 'whoami', 'rm', 'help', 'run'].sort();
+const helpCommands = ['clear', 'ls', 'cat', 'mkdir', 'cd', 'pwd', 'echo', 'printenv', 'whoami', 'rm', 'help', 'run', 'connect'].sort();
 
 export const help = {
     exec: (state) => {
@@ -36,6 +36,28 @@ export const run = {
 
       return Object.assign({}, state, {
           history: state.history.concat({ value }),
+      });
+  },
+}
+
+export const connect = {
+  exec: (state, { args }, parentCommands) => {
+      const value = state.settings.user.username;
+
+      if (Object.keys(args).length <= 0) {
+        return Object.assign({}, state, {
+            history: state.history.concat(
+              { value: 'Connect to p2p terminal. usage: connect [ip]' }
+            ),
+        });
+      }
+
+      if (args[0] === '972.816.203') {
+        return state;
+      }
+
+      return Object.assign({}, state, {
+          history: state.history.concat({ value: 'improper ip', type: 'error' }, { value: 'Connect to p2p terminal. usage: connect [ip]' })
       });
   },
 }
