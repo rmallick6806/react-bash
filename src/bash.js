@@ -1,16 +1,16 @@
 import * as Util from './util';
 import { Errors } from './const';
 import * as BaseCommands from './commands';
-import * as UpdatedCommands from './updatedCommands';
 import * as BashParser from './parser';
 
 export default class Bash {
 
-    constructor(extensions = {}, parentCommands) {
-        this.commands = Object.assign(extensions, BaseCommands);
+    constructor(extensions = {}, parentCommands, overwriteCommands, chatState) {
+        this.commands = (overwriteCommands) ?  Object.assign(extensions, overwriteCommands) : Object.assign(extensions, BaseCommands);
         this.parentCommands = parentCommands;
         this.prevCommands = [];
         this.prevCommandsIndex = 0;
+        this.chatState = chatState;
     }
 
     /*
@@ -60,6 +60,9 @@ export default class Bash {
             } else if (this.commands[command.name]) {
                 const nextState = this.commands[command.name].exec(newState, command, this.parentCommands);
                 errorOccurred = errorOccurred || (nextState && nextState.error);
+                return nextState;
+            } else if (this.chatState) {
+                const nextState = this.commands['chat'].exec(newState, command, this.parentCommands);
                 return nextState;
             } else {
                 errorOccurred = true;

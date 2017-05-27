@@ -53,6 +53,13 @@ export const connect = {
       }
 
       if (args[0] === '972.816.203') {
+        parentCommands.startBashChat();
+        return state;
+      }
+
+
+      if (args[0] === '9') {
+        parentCommands.startBashChat();
         return state;
       }
 

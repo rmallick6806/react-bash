@@ -121,11 +121,16 @@ export default class Terminal extends Component {
         this.refs.input.value = '';
     }
 
-    getInput(theme, styles, cwd, prefix) {
+    getInput(theme, styles, cwd, prefix, startBashChat) {
       const style = Object.assign({}, Styles[theme] || Styles.light, styles);
+      let joinedPrefix = `${prefix} ~${cwd} $`;
+      if (startBashChat) {
+        joinedPrefix = 'say:'
+      }
+
       return (
         <form onSubmit={evt => this.handleSubmit(evt)} style={style.form}>
-            <span style={style.prefix}>{`${prefix} ~${cwd} $`}</span>
+            <span style={style.prefix}>{joinedPrefix}</span>
             <input
               autoComplete="off"
               onKeyDown={this.handleKeyDown}
@@ -136,30 +141,39 @@ export default class Terminal extends Component {
       );
     };
 
-    renderHistoryItem(style) {
-        return (item, key) => {
-            const prefix = item.hasOwnProperty('cwd') ? (
-                <span style={style.prefix}>{`${this.props.prefix} ~${item.cwd} $`}</span>
-            ) : undefined;
-            let type = item.type || 'text';
-            return <div data-test-id={`history-${key}`} key={key} className={`${type}-type`}>{prefix}{item.value}</div>;
-        };
+    renderHistoryItem(style, startBashChat) {
+      return (item, key) => {
+          let joinedPrefix = `${this.props.prefix} ~${item.cwd} $`;
+          if (startBashChat) {
+            joinedPrefix = `${this.props.prefix}>`;
+          }
+          let prefix = item.hasOwnProperty('cwd') ? (
+              <span style={style.prefix}>{joinedPrefix}</span>
+          ) : undefined;
+          let type = item.type || 'text';
+
+          if (type === 'hacker-response') {
+            prefix = 'user8162030~host > '
+          }
+
+          return <div data-test-id={`history-${key}`} key={key} className={`${type}-type`}>{prefix}{item.value}</div>;
+      };
     }
 
     render() {
-        const { onClose, onExpand, onMinimize, prefix, styles, theme, children, inputDisabled, terminal: { history, cwd } } = this.props;
+        const { onClose, onExpand, onMinimize, prefix, styles, theme, children, inputDisabled, terminal: { history, cwd }, startBashChat } = this.props;
         const style = Object.assign({}, Styles[theme] || Styles.light, styles);
         return (
-            <div className="ReactBash" style={style.ReactBash}>
+            <div className="ReactBash" style={style.ReactBash} id='terminal1'>
                 <div style={style.header}>
                     <span style={style.redCircle} onClick={onClose}></span>
                     <span style={style.yellowCircle} onClick={onMinimize}></span>
                     <span style={style.greenCircle} onClick={onExpand}></span>
                 </div>
                 <div style={style.body} onClick={() => this.refs.input && this.refs.input.focus()}>
-                    {history.map(this.renderHistoryItem(style))}
+                    {history.map(this.renderHistoryItem(style, startBashChat))}
                     {children}
-                    {(inputDisabled) ? null : this.getInput(theme, styles, cwd, prefix)}
+                    {(inputDisabled) ? null : this.getInput(theme, styles, cwd, prefix, startBashChat)}
                 </div>
             </div>
         );
