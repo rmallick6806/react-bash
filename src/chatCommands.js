@@ -7,6 +7,23 @@ export const chat = {
       if (_.includes(input, 'who', 'you')) {
         parentCommands.chatResponse('whoAreYou');
       }
+
+      else if (_.includes(input, 'explain')) {
+
+      }
+
+      else if (_.includes(input, 'what', 'mean')) {
+
+      }
+
+      else if (_.includes(input, 'who', 'watching')) {
+
+      }
+
+      else {
+        parentCommands.chatResponse('confusedResponse');
+      }
+
       return state;
     }
 };
