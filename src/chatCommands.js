@@ -13,7 +13,7 @@ export const chat = {
       }
 
       else if (_.includes(input, 'what', 'mean')) {
-
+        parentCommands.chatResponse('whatDoYouMean');
       }
 
       else if (_.includes(input, 'who', 'watching')) {
